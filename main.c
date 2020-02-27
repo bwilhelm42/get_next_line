@@ -2,12 +2,16 @@
 #include <fcntl.h>
 #include "libft/libft.h"
 
-int		main()
+int		main(int ac, char **av)
 {
+	int i;
 	char *str;
-
-	str = (char*)malloc(4);
-	free(str);
-	*str = 'h';
+	
+	(void)ac;
+	str = NULL;
+	i = open(av[1], O_RDONLY);
+	get_next_line(i, &str);
+	write(1, str, 26);
+	ft_putstr(str);
 	return (0);
 }
