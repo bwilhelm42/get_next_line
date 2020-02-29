@@ -6,7 +6,7 @@
 /*   By: bwilhelm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/19 12:55:29 by bwilhelm          #+#    #+#             */
-/*   Updated: 2020/02/26 11:39:00 by bwilhelm         ###   ########.fr       */
+/*   Updated: 2020/02/28 22:00:16 by bwilhelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,5 +91,6 @@ void				ft_strrep(char *str, char new, char old);
 void				ft_putstrarr(char **arr, int n);
 t_list				*ft_lstrev(t_list **head);
 void				ft_printbyte(unsigned char byte);
+int					ft_strclen(char *str, char c);
 
 #endif

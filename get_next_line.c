@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   gnl.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bwilhelm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/26 16:28:16 by bwilhelm          #+#    #+#             */
-/*   Updated: 2020/02/27 09:36:57 by bwilhelm         ###   ########.fr       */
+/*   Created: 2020/02/28 16:04:34 by bwilhelm          #+#    #+#             */
+/*   Updated: 2020/02/29 14:27:39 by bwilhelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,44 +14,65 @@
 
 int		get_next_line(const int fd, char **line)
 {
-//	static int	line_count;
-	static int	total_read;
-	int			cur_read;
-	char		temp;
+	static char	*file;
+	int			ret;
+	int			i;
 
-	cur_read = total_read;
-	temp = 'a';
-	while (temp != '\n' && read(fd, &temp, 1))
-	{
-		if (++cur_read <= total_read)
-			continue ;
-		if (temp == '\n') 
-			return (0);
-		add_char(line, temp, cur_read);
-	}
-	return (0);
-}	
-
-void	ft_appendchar(char *dest, char src)
-{
-	int i;
-
-	i = ft_strlen(dest);
-	dest[i] = src;
-}
-
-void	add_char(char **line, char temp, int buf)
-{
-	char *ptr;
-
-	ptr = (char*)ft_memalloc(buf + 2);
-	if (*line == NULL)
-		*ptr = temp;
+	i = 0;
+	if (!line || BUFF_SIZE <= 0 || BUFF_SIZE >= INT_MAX)
+		return (-1);
+	if (file == NULL)
+		file = (char*)malloc(BUFF_SIZE + 1);
 	else
 	{
-		ft_strcpy(ptr, *line);
-		ft_appendchar(ptr, temp);
-		free(*line);
+		i = ft_strlen(file);
+		if (find_newline(&file, line))
+			return (1);
 	}
-	*line = ptr;
+	while ((ret = read(fd, &file[i], BUFF_SIZE)))
+	{
+		if (find_newline(&file, line))
+			return (1);
+		i += BUFF_SIZE;
+	}
+	find_newline(&file, line);
+	return (0);
+}
+
+int		find_newline(char **file, char **line)
+{
+	char	*nl;
+	int		line_len;
+	int		i;
+
+	i = 0;
+	while ((*file)[i] == '\n')
+		i++;
+	if (i > 0)
+		ft_set_realloc(file, i);
+	if (!(nl = ft_strchr(*file, '\n')))
+	{
+		ft_set_realloc(file, 0);
+		return (0);
+	}
+	line_len = ft_strclen(*file, '\n');
+	*line = (char*)ft_memalloc(line_len + 1);
+	ft_strncpy(*line, *file, line_len);
+	ft_set_realloc(file, line_len + 1);
+	return (1);
+}
+
+void	ft_set_realloc(char **str, int new_pos)
+{
+	char	*temp;
+	int		len;
+
+	len = ft_strlen(&(*str)[new_pos]);
+	if (new_pos == 0)
+		temp = (char*)ft_memalloc(len + BUFF_SIZE + 1);
+	else
+		temp = (char*)ft_memalloc(len + 1);
+	ft_strcpy(temp, &(*str)[new_pos]);
+	free(*str);
+	*str = temp;
 }

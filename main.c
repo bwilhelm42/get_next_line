@@ -6,12 +6,17 @@ int		main(int ac, char **av)
 {
 	int i;
 	char *str;
-	
+	int ret;
+
 	(void)ac;
 	str = NULL;
 	i = open(av[1], O_RDONLY);
-	get_next_line(i, &str);
-	write(1, str, 26);
-	ft_putstr(str);
+	while ((ret = get_next_line(i, &str)))
+	{
+		ft_putnbr(ret);
+		ft_putendl(str);
+		free(str);
+	}
+	ft_putnbr(ret);
 	return (0);
 }
