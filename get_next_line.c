@@ -6,7 +6,7 @@
 /*   By: bwilhelm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 16:04:34 by bwilhelm          #+#    #+#             */
-/*   Updated: 2020/02/29 14:27:39 by bwilhelm         ###   ########.fr       */
+/*   Updated: 2020/02/29 18:30:34 by bwilhelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int		get_next_line(const int fd, char **line)
 	{
 		if (find_newline(&file, line))
 			return (1);
-		i += BUFF_SIZE;
+		if (*file != '\0')
+			i += BUFF_SIZE;
 	}
 	find_newline(&file, line);
 	return (0);
