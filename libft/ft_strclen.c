@@ -6,7 +6,7 @@
 /*   By: bwilhelm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 21:56:51 by bwilhelm          #+#    #+#             */
-/*   Updated: 2020/03/02 14:46:20 by bwilhelm         ###   ########.fr       */
+/*   Updated: 2020/03/02 18:33:16 by bwilhelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int		ft_strclen(char *str, char c)
 	int i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while (str[i] != c && str[i] != '\0')
 		if (str[++i] == '\n')
 			return (i);

@@ -6,7 +6,7 @@
 /*   By: bwilhelm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/26 16:28:35 by bwilhelm          #+#    #+#             */
-/*   Updated: 2020/03/02 17:17:03 by bwilhelm         ###   ########.fr       */
+/*   Updated: 2020/03/02 18:19:36 by bwilhelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,6 @@ int		find_newline(char **file, char **line);
 void	ft_set_realloc(char **str, int new_pos);
 int		find_nl(char **file, char **line);
 int		sort_returns(long ret);
+int		handle_eof(char **file, char **line);
 
 #endif

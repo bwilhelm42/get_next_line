@@ -6,7 +6,7 @@
 /*   By: bwilhelm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 13:28:04 by bwilhelm          #+#    #+#             */
-/*   Updated: 2020/03/02 17:41:25 by bwilhelm         ###   ########.fr       */
+/*   Updated: 2020/03/02 18:28:42 by bwilhelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,14 @@ int		get_next_line(const int fd, char **line)
 	index = ft_strlen(file);
 	while ((ret = read(fd, &file[index], BUFF_SIZE)))
 	{
-		if (find_nl(&file, line))
+		file[ret] = '\0';
+		if (ret < BUFF_SIZE && !find_nl(&file, line))
+			return (handle_eof(&file, line));
+		else 
 			return (1);
 		index += BUFF_SIZE;
 	}
-	file[index] = '\n';
-	find_nl(&file, line);
-	free(file);
-	return (0);
+	return (handle_eof(&file, line));
 }
 
 int		find_nl(char **file, char **line)
@@ -75,4 +75,17 @@ int		sort_returns(long ret)
 	if (ret == BUFF_SIZE)
 		return (1);
 	return (1);
+}
+
+int		handle_eof(char **file, char **line)
+{
+	long len;
+	
+	len = ft_strlen(*file);
+	*line = (char*)malloc(len + 1);
+	ft_strcpy(*line, *file);
+	(*line)[len] = '\0';
+	free(*file);
+	*file = NULL;
+	return (0);
 }
