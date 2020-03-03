@@ -6,7 +6,7 @@
 /*   By: bwilhelm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 13:28:04 by bwilhelm          #+#    #+#             */
-/*   Updated: 2020/03/02 19:30:48 by bwilhelm         ###   ########.fr       */
+/*   Updated: 2020/03/02 22:00:24 by bwilhelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,40 +14,31 @@
 
 int		get_next_line(const int fd, char **line)
 {
-	static char *files[FD_MAX];
-
-	if (fd > FD_MAX)
-		return (-1);
-	return(got_next_line(&files[fd], fd, line));
-}
-
-int		got_next_line(char **file, const int fd, char **line)
-{
+	static char	*file[FD_MAX];
 	long		ret;
 	long		index;
 
-	if (BUFF_SIZE > INT_MAX || BUFF_SIZE <= 0 || line == NULL)
+	if (BUFF_SIZE >= INT_MAX || BUFF_SIZE <= 0 || line == NULL)
 		return (-1);
-	if (!*file)
+	if (!file[fd])
 	{
-		*file = (char*)malloc(BUFF_SIZE + 1);
-		(*file)[BUFF_SIZE] = '\0';
+		file[fd] = (char*)malloc(BUFF_SIZE + 1);
+		file[fd][BUFF_SIZE] = '\0';
+		file[fd][0] = '\0';
 	}
-	else if (find_nl(file, line))
+	else if (find_nl(&file[fd], line))
 		return (1);
-	index = ft_strlen(*file);
-	while ((ret = read(fd, &(*file)[index], BUFF_SIZE)) > 0)
+	index = ft_strlen(file[fd]);
+	while ((ret = read(fd, &file[fd][index], BUFF_SIZE)) > 0)
 	{
-		(*file)[ret] = '\0';
-		if (ret < BUFF_SIZE && !find_nl(file, line))
-			return (handle_eof(file, line));
-		else 
+		file[fd][ret + index] = '\0';
+		if (find_nl(&file[fd], line))
 			return (1);
+		else if (ret < BUFF_SIZE)
+			return (handle_eof(&file[fd], line));
 		index += BUFF_SIZE;
 	}
-	if (ret == -1)
-		return (-1);
-	return (handle_eof(file, line));
+	return ((ret == -1) ? -1 : (handle_eof(&file[fd], line)));
 }
 
 int		find_nl(char **file, char **line)
@@ -63,14 +54,15 @@ int		find_nl(char **file, char **line)
 		(*line)[i] = '\0';
 		ft_strncpy(*line, *file, i);
 		temp = (char*)malloc(ft_strlen(&(*file)[i]));
-		strcpy(temp, &(*file)[i + 1]);
+		ft_strcpy(temp, &(*file)[i + 1]);
 		free(*file);
 		*file = temp;
 		return (1);
 	}
-	temp = (char*)malloc((len = ft_strlen(*file)) + BUFF_SIZE + 1);
+	len = ft_strlen(*file);
+	temp = (char*)malloc(len + BUFF_SIZE + 1);
 	temp[len + BUFF_SIZE] = '\0';
-	strcpy(temp, *file);
+	ft_strcpy(temp, *file);
 	free(*file);
 	*file = temp;
 	return (0);
@@ -79,7 +71,7 @@ int		find_nl(char **file, char **line)
 int		handle_eof(char **file, char **line)
 {
 	long len;
-	
+
 	len = ft_strlen(*file);
 	*line = (char*)malloc(len + 1);
 	ft_strcpy(*line, *file);
