@@ -6,7 +6,7 @@
 /*   By: bwilhelm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 13:28:04 by bwilhelm          #+#    #+#             */
-/*   Updated: 2020/03/02 18:28:42 by bwilhelm         ###   ########.fr       */
+/*   Updated: 2020/03/02 18:43:10 by bwilhelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int		get_next_line(const int fd, char **line)
 	else if (find_nl(&file, line))
 		return (1);
 	index = ft_strlen(file);
-	while ((ret = read(fd, &file[index], BUFF_SIZE)))
+	while ((ret = read(fd, &file[index], BUFF_SIZE)) > 0)
 	{
 		file[ret] = '\0';
 		if (ret < BUFF_SIZE && !find_nl(&file, line))
@@ -37,6 +37,8 @@ int		get_next_line(const int fd, char **line)
 			return (1);
 		index += BUFF_SIZE;
 	}
+	if (ret == -1)
+		return (-1);
 	return (handle_eof(&file, line));
 }
 
