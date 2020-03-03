@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bwilhelm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/28 16:04:34 by bwilhelm          #+#    #+#             */
-/*   Updated: 2020/02/29 18:30:34 by bwilhelm         ###   ########.fr       */
+/*   Created: 2020/03/02 13:28:04 by bwilhelm          #+#    #+#             */
+/*   Updated: 2020/03/02 17:41:25 by bwilhelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,65 +15,64 @@
 int		get_next_line(const int fd, char **line)
 {
 	static char	*file;
-	int			ret;
-	int			i;
+	long		ret;
+	long		index;
 
-	i = 0;
-	if (!line || BUFF_SIZE <= 0 || BUFF_SIZE >= INT_MAX)
+	if (BUFF_SIZE > INT_MAX || BUFF_SIZE <= 0 || line == NULL)
 		return (-1);
-	if (file == NULL)
+	if (!file)
+	{
 		file = (char*)malloc(BUFF_SIZE + 1);
-	else
-	{
-		i = ft_strlen(file);
-		if (find_newline(&file, line))
-			return (1);
+		file[BUFF_SIZE] = '\0';
 	}
-	while ((ret = read(fd, &file[i], BUFF_SIZE)))
+	else if (find_nl(&file, line))
+		return (1);
+	index = ft_strlen(file);
+	while ((ret = read(fd, &file[index], BUFF_SIZE)))
 	{
-		if (find_newline(&file, line))
+		if (find_nl(&file, line))
 			return (1);
-		if (*file != '\0')
-			i += BUFF_SIZE;
+		index += BUFF_SIZE;
 	}
-	find_newline(&file, line);
+	file[index] = '\n';
+	find_nl(&file, line);
+	free(file);
 	return (0);
 }
 
-int		find_newline(char **file, char **line)
+int		find_nl(char **file, char **line)
 {
-	char	*nl;
-	int		line_len;
-	int		i;
+	long i;
+	long len;
+	char *temp;
 
 	i = 0;
-	while ((*file)[i] == '\n')
-		i++;
-	if (i > 0)
-		ft_set_realloc(file, i);
-	if (!(nl = ft_strchr(*file, '\n')))
+	if ((i = ft_strclen(*file, '\n')) || **file == '\n')
 	{
-		ft_set_realloc(file, 0);
-		return (0);
+		*line = (char*)malloc(i + 1);
+		(*line)[i] = '\0';
+		ft_strncpy(*line, *file, i);
+		temp = (char*)malloc(ft_strlen(&(*file)[i]));
+		strcpy(temp, &(*file)[i + 1]);
+		free(*file);
+		*file = temp;
+		return (1);
 	}
-	line_len = ft_strclen(*file, '\n');
-	*line = (char*)ft_memalloc(line_len + 1);
-	ft_strncpy(*line, *file, line_len);
-	ft_set_realloc(file, line_len + 1);
-	return (1);
+	temp = (char*)malloc((len = ft_strlen(*file)) + BUFF_SIZE + 1);
+	temp[len + BUFF_SIZE] = '\0';
+	strcpy(temp, *file);
+	free(*file);
+	*file = temp;
+	return (0);
 }
 
-void	ft_set_realloc(char **str, int new_pos)
+int		sort_returns(long ret)
 {
-	char	*temp;
-	int		len;
-
-	len = ft_strlen(&(*str)[new_pos]);
-	if (new_pos == 0)
-		temp = (char*)ft_memalloc(len + BUFF_SIZE + 1);
-	else
-		temp = (char*)ft_memalloc(len + 1);
-	ft_strcpy(temp, &(*str)[new_pos]);
-	free(*str);
-	*str = temp;
+	if (ret == -1)
+		return (-1);
+	if (ret < BUFF_SIZE)
+		return (0);
+	if (ret == BUFF_SIZE)
+		return (1);
+	return (1);
 }

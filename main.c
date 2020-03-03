@@ -16,7 +16,9 @@ int		main(int ac, char **av)
 		ft_putnbr(ret);
 		ft_putendl(str);
 		free(str);
+		
 	}
 	ft_putnbr(ret);
+	ft_putstr(str);
 	return (0);
 }
