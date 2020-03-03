@@ -6,7 +6,7 @@
 /*   By: bwilhelm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 13:28:04 by bwilhelm          #+#    #+#             */
-/*   Updated: 2020/03/02 18:43:10 by bwilhelm         ###   ########.fr       */
+/*   Updated: 2020/03/02 19:30:48 by bwilhelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,40 @@
 
 int		get_next_line(const int fd, char **line)
 {
-	static char	*file;
+	static char *files[FD_MAX];
+
+	if (fd > FD_MAX)
+		return (-1);
+	return(got_next_line(&files[fd], fd, line));
+}
+
+int		got_next_line(char **file, const int fd, char **line)
+{
 	long		ret;
 	long		index;
 
 	if (BUFF_SIZE > INT_MAX || BUFF_SIZE <= 0 || line == NULL)
 		return (-1);
-	if (!file)
+	if (!*file)
 	{
-		file = (char*)malloc(BUFF_SIZE + 1);
-		file[BUFF_SIZE] = '\0';
+		*file = (char*)malloc(BUFF_SIZE + 1);
+		(*file)[BUFF_SIZE] = '\0';
 	}
-	else if (find_nl(&file, line))
+	else if (find_nl(file, line))
 		return (1);
-	index = ft_strlen(file);
-	while ((ret = read(fd, &file[index], BUFF_SIZE)) > 0)
+	index = ft_strlen(*file);
+	while ((ret = read(fd, &(*file)[index], BUFF_SIZE)) > 0)
 	{
-		file[ret] = '\0';
-		if (ret < BUFF_SIZE && !find_nl(&file, line))
-			return (handle_eof(&file, line));
+		(*file)[ret] = '\0';
+		if (ret < BUFF_SIZE && !find_nl(file, line))
+			return (handle_eof(file, line));
 		else 
 			return (1);
 		index += BUFF_SIZE;
 	}
 	if (ret == -1)
 		return (-1);
-	return (handle_eof(&file, line));
+	return (handle_eof(file, line));
 }
 
 int		find_nl(char **file, char **line)
@@ -66,17 +74,6 @@ int		find_nl(char **file, char **line)
 	free(*file);
 	*file = temp;
 	return (0);
-}
-
-int		sort_returns(long ret)
-{
-	if (ret == -1)
-		return (-1);
-	if (ret < BUFF_SIZE)
-		return (0);
-	if (ret == BUFF_SIZE)
-		return (1);
-	return (1);
 }
 
 int		handle_eof(char **file, char **line)

@@ -6,7 +6,7 @@
 /*   By: bwilhelm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/26 16:28:35 by bwilhelm          #+#    #+#             */
-/*   Updated: 2020/03/02 18:19:36 by bwilhelm         ###   ########.fr       */
+/*   Updated: 2020/03/02 19:26:21 by bwilhelm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,13 @@
 
 # define BUFF_SIZE 2147483646
 # define INT_MAX 2147483647
+# define FD_MAX 1000
 # include <stdlib.h>
 # include <unistd.h>
 # include "libft/libft.h"
 
 int		get_next_line(const int fd, char **line);
+int		got_next_line(char **file, const int fd, char **line);
 int		find_newline(char **file, char **line);
 void	ft_set_realloc(char **str, int new_pos);
 int		find_nl(char **file, char **line);
